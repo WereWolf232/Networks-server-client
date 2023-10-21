@@ -19,13 +19,13 @@ if port < 1024 or port > 65535:
 # Create the socket on which the server will receive new connections
 server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-# catch  exceptions related to already bound ports, etc..
+# catch exceptions related to already bound ports, etc..
 try:
 	server_socket.bind(("0.0.0.0", int(sys.argv[1])))
 	server_socket.listen(5)
 
 except Exception as e:
-	print(e)
+	print("kos omo yesh be'aya" + e)
 	sys.exit(1)
 
 print(f"Server up and running on {socket.gethostbyname(socket.gethostname())}:{port}")
@@ -42,28 +42,34 @@ while True:
 		 plus the client-side socket's address (IP and port number).
 		"""
 		client_socket, client_address = server_socket.accept()
-		client_address_str = str(client_address) # Translate the client address to a string (to be used shortly)
 
-		print("Client " + client_address_str + " connected.")
+		print("Client " + str(client_address) + " connected.")
 
-		# Loop until either the client closes the connection or the user requests termination
-		while True:
-			# First, read data from client and print on screen
-			bytes_read = socket_to_screen(client_socket, client_address_str)
-			if bytes_read == 0:
-				print("Client closed connection.")
-				break
+		
+		# receiving a request command
+		request_type = client_socket.recv(4).decode().strip() 
+		print("request: " +"<"+request_type+">")
+		# PUT request_type
+		if request_type == "put":
+			pass
+			
+		# GET request_type
+		elif request_type == "get":
+			pass
+	
+		# LIST request_type
+		elif request_type == "LIST":
+			send_listing(client_socket)
+			print(f"posted LIST to {client_address[0]}:{client_address[1]} Successfully")
 
-			# Then, read data from user and send to client
-			bytes_sent = keyboard_to_socket(client_socket)
-			if bytes_sent == 0:
-				print("User-requested exit.")
-				break
+
+		print(f"Finished handling {request_type} request from {str(client_address)}\n")
+		
 
 
 	# socket errors as well as errors related to user input.			
 	except(e):
-		print(e)
+		print("sem emek" + e)
 		sys.exit(1)
 		
 	finally:

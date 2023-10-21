@@ -14,4 +14,5 @@ def send_listing(socket):
 
 def recv_listing(socket):
     listing = socket.recv(4096).decode()
-    print(listing)
+    print("\nFiles on server: ")
+    print(listing + "\n")
