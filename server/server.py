@@ -26,7 +26,6 @@ try:
 	server_socket.listen(5)
 
 except Exception as e:
-	print("kos omo yesh be'aya")
 	print(e)
 	sys.exit(1)
 
@@ -44,7 +43,6 @@ while True:
 		
 		# receiving a request command
 		request_type = client_socket.recv(4).decode().strip() 
-		print("initial request: " +"<"+request_type+">")
 
 
 		# PUT request_type
@@ -86,11 +84,6 @@ while True:
 				print("File sent successfully.")
 				
 
-
-
-
-
-
 		# LIST request_type
 		elif request_type == "LIST":
 			print("request: " +"<"+request_type+">")
@@ -105,7 +98,6 @@ while True:
 
 	# socket errors as well as errors related to user input.			
 	except Exception as e:
-		print("s'em emek")
 		print(e)
 		sys.exit(1)
 		

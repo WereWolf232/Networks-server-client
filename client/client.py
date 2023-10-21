@@ -35,19 +35,20 @@ try:
 	print("Connected to server")
 
 except Exception as e:
-	print("ina'al haolam")
 	print(e)
 	sys.exit(1)
 
-# this is where the commands are going to start
+
 # try-except block to account for socket errors as well as errors related to user input.
 try:
+	print("request: " +"<"+command+">")
+
 	# PUT command
 	if command == "put":
 
 		# error checking that file exists
 		if not os.path.exists(filename):
-			print("Local filename not found.")
+			print(f"Local filename <{filename}> not found.")
 			sys.exit(1)
 
 		# sending PUT command to server
@@ -69,16 +70,16 @@ try:
 
 		response = client_socket.recv(1024).decode().strip()
 		if response == "File already exists.":
-			print("File already exists.")
+			print(f"File <{filename}> already exists.")
 		else:
-			print("File sent successfully")
+			print(f"File <{filename}> sent successfully")
 			
 
 	# GET command
 	elif command == "get":
 		# check if file already exists in current folder
 		if os.path.exists(filename):
-			print("Local filename already exists.")
+			print("Local filename <{filename}> already exists.")
 			sys.exit(1)
 
 		# sending command to server
@@ -94,17 +95,11 @@ try:
 
 		response = client_socket.recv(1024).decode().strip()
 		if response == "File not found.":
-			print("File not found.")
+			print("File <{filename}> not found.")
 			sys.exit(1)
 		else:
 			recv_file(client_socket,filename)
-			print("File received successfully")
-
-
-
-
-
-
+			print("File <{filename}> received successfully")
 
 
 	# LIST command
@@ -114,7 +109,6 @@ try:
 		# receiving filename list from server
 		recv_listing(client_socket)
 		print(f"got LIST from {host}:{port} Successfully")
-
 
 
 #If an error occurs or the server closes the connection, call close().
