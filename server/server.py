@@ -48,23 +48,27 @@ while True:
 		
 		# receiving a request command
 		request_type = client_socket.recv(4).decode().strip() 
-		print("request: " +"<"+request_type+">")
+		
 		# PUT request_type
 		if request_type == "put":
+			print("request: " +"<"+request_type+">")
 			pass
 			
 		# GET request_type
 		elif request_type == "get":
+			print("request: " +"<"+request_type+">")
 			pass
 	
 		# LIST request_type
 		elif request_type == "LIST":
+			print("request: " +"<"+request_type+">")
 			send_listing(client_socket)
 			print(f"posted LIST to {client_address[0]}:{client_address[1]} Successfully")
 
-
-		print(f"Finished handling {request_type} request from {str(client_address)}\n")
-		
+		if request_type:
+			print(f"Finished handling {request_type} request from {str(client_address)}\n")
+		else:
+			print("Action not completed")
 
 
 	# socket errors as well as errors related to user input.			

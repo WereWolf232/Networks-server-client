@@ -35,14 +35,27 @@ try:
 
 except Exception as e:
 	print("ina'al haolam" + e)
-	exit(1)
+	sys.exit(1)
 
 # this is where the commands are going to start
 # try-except block to account for socket errors as well as errors related to user input.
 try:
 	# PUT command
 	if command == "put":
+
+		# error checking that file exists
+		if not os.path.exists(filename):
+			print("Local filename not found.")
+			sys.exit(1)
+
+		# sending PUT command to server
 		client_socket.sendall("PUT".encode())
+
+		
+			
+
+
+
 		print("file uploaded succesfully")
 	# GET command
 	elif command == "get":
@@ -63,7 +76,8 @@ try:
 
 #If an error occurs or the server closes the connection, call close().
 finally:
+	print("Connection Closed")
 	client_socket.close()
 
 # Exit with a zero value, to indicate success
-exit(0)
+sys.exit(0)
