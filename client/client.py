@@ -1,15 +1,22 @@
 import socket
 import sys
-from lab3 import socket_to_screen, keyboard_to_socket
+import os
+from shared import *
+
+
+# input error checking
+if len(sys.argv) < 4:
+	print("Usage: python client.py <hostname> <port> <put 'filename'|get 'filename'|list>")
+	sys.exit(1)
+
+host = sys.argv[1]
+port = int(sys.argv[2])
+server_address = (host,port)
+command = sys.argv[3]
+filename = sys.argv[4] if command in ["put", "get"] else None
 
 # Create the socket with which we will connect to the server
-cli_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-
-# The server's address is a tuple, comprising the server's IP address or hostname, and port number
-srv_addr = (sys.argv[1], int(sys.argv[2])) # sys.argv[x] is the x'th argument on the command line
-
-# Convert to string, to be used shortly
-srv_addr_str = str(srv_addr)
+client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
 """ 
  Enclose the connect() call in a try-except block to catch
@@ -18,7 +25,7 @@ srv_addr_str = str(srv_addr)
  have been handled separately.
 """
 try:
-	print("Connecting to " + srv_addr_str + "... ")
+	print("Connecting to " + server_address + "... ")
 
 	"""
 	 Connect our socket to the server. This will actually bind our socket to
@@ -29,7 +36,7 @@ try:
 	 finished successfully, and a TCP connection to the server will have been
 	 established.
 	"""
-	cli_sock.connect(srv_addr)
+	client_socket.connect(server_address)
 	
 	print("Connected. Now chatting...")
 except Exception as e:
@@ -47,13 +54,13 @@ try:
 	# Loop until either the server closes the connection or the user requests termination
 	while True:
 		# First, read data from keyboard and send to server
-		bytes_sent = keyboard_to_socket(cli_sock)
+		bytes_sent = keyboard_to_socket(client_socket)
 		if bytes_sent == 0:
 			print("User-requested exit.")
 			break
 
 		# Then, read data from server and print on screen
-		bytes_read = socket_to_screen(cli_sock, srv_addr_str)
+		bytes_read = socket_to_screen(client_socket, server_address_str)
 		if bytes_read == 0:
 			print("Server closed connection.")
 			break
@@ -63,7 +70,7 @@ finally:
 	 If an error occurs or the server closes the connection, call close() on the
 	 connected socket to release the resources allocated to it by the OS.
 	"""
-	cli_sock.close()
+	client_socket.close()
 
 # Exit with a zero value, to indicate success
 exit(0)
