@@ -1,6 +1,7 @@
 import socket
 import sys
 import os
+import time
 from shared import *
 
 
@@ -51,7 +52,7 @@ while True:
 			print("request: " +"<"+request_type+">")
 
 			# process the file name
-			filename = client_socket.recv(4096).decode().strip()
+			filename = client_socket.recv(1024).decode().strip()
 			print("file name: " + "<"+filename+">")
 
 			if os.path.exists(filename):
@@ -69,8 +70,27 @@ while True:
 		# GET request_type
 		elif request_type == "GET":
 			print("request: " +"<"+request_type+">")
-			pass
-	
+			
+			# process the file name
+			filename = client_socket.recv(1024).decode().strip()
+			print("file requested: " + "<"+filename+">")
+
+			if not os.path.exists(filename):
+				print("File not found.")
+				client_socket.sendall("File not found.".encode())
+
+			else:
+				client_socket.sendall("Uploading".encode())
+				time.sleep(0.05)
+				send_file(client_socket, filename)
+				print("File sent successfully.")
+				
+
+
+
+
+
+
 		# LIST request_type
 		elif request_type == "LIST":
 			print("request: " +"<"+request_type+">")
@@ -85,7 +105,7 @@ while True:
 
 	# socket errors as well as errors related to user input.			
 	except Exception as e:
-		print("sem emek")
+		print("s'em emek")
 		print(e)
 		sys.exit(1)
 		

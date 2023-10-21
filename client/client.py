@@ -71,13 +71,39 @@ try:
 		if response == "File already exists.":
 			print("File already exists.")
 		else:
-			print("File sent succesfully")
+			print("File sent successfully")
 			
 
 	# GET command
 	elif command == "get":
+		# check if file already exists in current folder
+		if os.path.exists(filename):
+			print("Local filename already exists.")
+			sys.exit(1)
+
+		# sending command to server
 		client_socket.sendall("GET".encode())
-		print("file downloaded succesfully")
+
+		time.sleep(0.05) 
+
+		# sending filename name to server
+		client_socket.sendall(filename.encode())
+
+		client_socket.shutdown(socket.SHUT_WR)
+
+
+		response = client_socket.recv(1024).decode().strip()
+		if response == "File not found.":
+			print("File not found.")
+			sys.exit(1)
+		else:
+			recv_file(client_socket,filename)
+			print("File received successfully")
+
+
+
+
+
 
 
 
