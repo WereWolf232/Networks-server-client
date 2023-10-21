@@ -1,0 +1,46 @@
+Q: Where should I start?
+A: As a general remark, please study the code and comments in the sample solution for lab 3 and ask us if anything is unclear. Read the AE spec again and ask us if anything is unclear. Please note that you are also expected to read up on the documentation for Lib/socket.py; do not assume that all you need to know is in the AE spec and/or lab 3 sample solution.
+
+Q: How can I run multiple programs on the command line?
+A: Open a second (or more) command prompt window(s). Remember to change directory (cd ...) to where you have stored your Python files. By the way: directory = folder, in case the former term is confusing you.
+
+Q: How can I run multiple python programs in IDLE?
+A: Open the Python programs you want to execute via File -> Open (then navigate to your file). You can do this multiple times, with IDLE opening a new window with the source code of the chosen file. In these windows, choose Run -> Run Module, or simply hit F5 (more on this shortly).
+
+Q: How can I run the client and server on the same machine?
+A: This is very easily accomplished using either multiple command line/IDLE windows, as above. For AE1, though, you need to take an extra step. If you execute both the client and the server from the same starting directory, uploading or downloading would be overwriting the very file you try to transfer (and hence should always fail). As such, you'll need to execute your code from different directories. The easiest way to accomplish this is to make a copy of your code in a different directory and execute the client in one and the server in the other (if using IDLE, open the client.py from one directory and the server.py from the other directory).
+
+Q: What IP address should I use at the server?
+A: Please use "0.0.0.0" or the empty string (""). This is a special IP address, meaning "all IP addresses". When used in the server's bind() call it allows the program to receive messages at the user-defined port number on all interfaces/addresses that the computer might have. However, you cannot use "0.0.0.0" as the IP address of a host you want to connect to.
+
+Q: What IP address should I use at the client?
+A: As mentioned above, you cannot use "0.0.0.0" to connect to a host. For this you will need to either use the hosts's hostname/IP address or, if both client and server are running on the same machine, "localhost" or "127.0.0.1". These latter two are also special and mean "the same machine I'm running on". When used in the client's connect() call, it signifies that the client will try to connect to the user-defined port number at the same machine the client is running on.
+
+Q: What is this sys.argv[x] thing that you are using?
+A: The term "argv" is borrowed from C, where it represents the "argument vector" (hence its name). In essence it is an array/vector whose elements are the command line arguments. The first position in the array (position 0) usually contains the name of the program itself, with every subsequent position holding the arguments in order of appearance on the command line. For example, if you execute a Python program like so 'python myprogram.py a b c', then argv will contain 4 elements (i.e., len(argv) = 4), with argv[0] = myprogram.py, argv[1] = a, argv[2] = b, argv[3] = c.
+
+Q: How can I provide command-line arguments in IDLE?
+A: Unfortunately, although doable, it can be quite cumbersome. If you plan to use IDLE, it might be easier to hardcode your arguments in your source code. My recommendation would be to use this method to develop/test your code, but revert to using sys.argv and execution through the command line before submitting your code. For example, have both below lines in your code and comment/uncomment as necessary:
+   #srv_addr = (sys.argv[1], int(sys.argv[2]))
+   srv_addr = ("0.0.0.0", 5000)
+
+Q: I cannot communicate with my server/client when executed on different PCs in the lab
+A: This should no longer be the case as IT Support should have changed the Windows Firewall policy at the labs. Make sure you are using the correct hostname/IP address and port numbers on both sides. If the error persists, let your tutor know and in the meanwhile revert to testing your code with both programs running on a single host.
+
+Q: What are the encode() and decode() functions supposed to do? Do I need them?
+A: The sockets API is data agnostic; all it sees is data in the form of a bytes/bytearray object. As such, socket functions sending data expect an argument in the form of such an object, and functions receiving data return such an object. In the lab 3 sample solution, the client and server where exchanging strings back and forth. Consequently, in order to be sent via the sockets, these strings had to be converted to bytes on the sending side and then converted back to strings on the receiving side. Although there are many ways of accomplishing this, using str.encode(...) and bytes.decode(...) is a fairly safe and easy way.
+
+Q: I can see no encode()/decode() for other types. Now what?
+A: Integers have a .to_bytes(...) method that will convert the variable to an array of bytes, and a similar .from_bytes(...) method to convert back to an integer variable. For other data types, you can use Lib/structy.py; more specifically, struct.pack(...) will convert from a standard type to a bytes object, while struct.unpack(...) converts from bytes back to the original data type. Also see the array module; specifically, array.tobytes(...) and array.frombytes(...).
+
+Q: What types of files do you expect our client/server to handle?
+A: Your client/server should be able to handle arbitrary binary files. Do NOT assume that you will only need to transfer text files.
+
+Q: How can I use a third (or more) Python file to store my common functions/variables/...?
+A: See the sample solution for lab 3. Simply place your common code in a file; this will then be handled as a module, meaning you will need to either use the file's name as a prefix in your calls (similarly to how "lab3" is used as a prefix when calling socket_to_screen(...) and keyboard_to_socket(...) in the sample solution), or to import the specific functions from the module (i.e., from lab3 import keyboard_to_socket, socket_to_screen) and then use them without the prefix.
+
+Q: Do I need to use multiple Python files for my source code?
+A: No, but doing so has the potential of making your code cleaner, more readable, and easier to develop and debug.
+
+Q: What would you suggest that we did first?
+A: First make sure you understand and that you can successfully execute lab 3's sample solution. I'd then suggest that you spend some time to design your application-level protocol, thinking about the structure and handling of your requests and responses. With that done, I'd suggest that you then split the work on (i) implementing the server-side handling of 'get' requests  and (ii) server-side handling of 'put' requests. Try to make your code modular/use functions/etc. as that will allow you to reuse some of this code on the client side as well. Then switch sides and work on the client-side handling of requests. Of course, this is all just a suggestion and you are free to do as you please and deem best.
