@@ -1,6 +1,7 @@
 import socket
 import sys
 import os
+import time
 from shared import *
 
 
@@ -34,7 +35,8 @@ try:
 	print("Connected to server")
 
 except Exception as e:
-	print("ina'al haolam" + e)
+	print("ina'al haolam")
+	print(e)
 	sys.exit(1)
 
 # this is where the commands are going to start
@@ -51,12 +53,27 @@ try:
 		# sending PUT command to server
 		client_socket.sendall("PUT".encode())
 
-		
+		# delay so the command and filename sending don't go to the same stream
+		# this is the simplest and easiest solution for our purposes
+		time.sleep(0.05) 
+
+		client_socket.sendall(filename.encode())
+
+		time.sleep(0.05) 
+
+		# send the actual file contents
+		send_file(client_socket,filename)
+
+		# I finished sending, no need for outgoing data anymore
+		client_socket.shutdown(socket.SHUT_WR)
+
+		response = client_socket.recv(1024).decode().strip()
+		if response == "File already exists.":
+			print("File already exists.")
+		else:
+			print("File sent succesfully")
 			
 
-
-
-		print("file uploaded succesfully")
 	# GET command
 	elif command == "get":
 		client_socket.sendall("GET".encode())

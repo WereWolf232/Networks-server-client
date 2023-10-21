@@ -25,7 +25,8 @@ try:
 	server_socket.listen(5)
 
 except Exception as e:
-	print("kos omo yesh be'aya" + e)
+	print("kos omo yesh be'aya")
+	print(e)
 	sys.exit(1)
 
 print(f"Server up and running on {socket.gethostbyname(socket.gethostname())}:{port}")
@@ -33,14 +34,8 @@ print(f"Server up and running on {socket.gethostbyname(socket.gethostname())}:{p
 # Loop forever (or at least for as long as no fatal errors occur)
 while True:
 	try:
+		#this will block the code execution until one comes in. Returns a new socket to use to communicate with the connected client
 		print("Waiting for new client... ")
-		
-		"""
-		 Dequeue a connection request from the queue created by listen() earlier.
-		 If no such request is in the queue yet, this will block the code execution until one comes
-		 in. Returns a new socket to use to communicate with the connected client
-		 plus the client-side socket's address (IP and port number).
-		"""
 		client_socket, client_address = server_socket.accept()
 
 		print("Client " + str(client_address) + " connected.")
@@ -48,14 +43,31 @@ while True:
 		
 		# receiving a request command
 		request_type = client_socket.recv(4).decode().strip() 
-		
+		print("initial request: " +"<"+request_type+">")
+
+
 		# PUT request_type
-		if request_type == "put":
+		if request_type == "PUT":
 			print("request: " +"<"+request_type+">")
-			pass
+
+			# process the file name
+			filename = client_socket.recv(4096).decode().strip()
+			print("file name: " + "<"+filename+">")
+
+			if os.path.exists(filename):
+				print("File already exists.")
+				client_socket.sendall("File already exists.".encode()) 
+			else:
+				# download file
+				recv_file(client_socket, filename)
+				print("File downloaded")
+
+				# send SUCCESS
+				client_socket.sendall("SUCCESS".encode()) 
+
 			
 		# GET request_type
-		elif request_type == "get":
+		elif request_type == "GET":
 			print("request: " +"<"+request_type+">")
 			pass
 	
@@ -72,8 +84,9 @@ while True:
 
 
 	# socket errors as well as errors related to user input.			
-	except(e):
-		print("sem emek" + e)
+	except Exception as e:
+		print("sem emek")
+		print(e)
 		sys.exit(1)
 		
 	finally:
