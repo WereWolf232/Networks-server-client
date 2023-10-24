@@ -2,3 +2,6 @@ git rm --cached /client/1GB.zip
 git rm --cached /server/1GB.zip
 /server/1GB.zip
 /client/1GB.zip
+Assessed\ Exercise.pdf
+FAQ.txt
+tests\ to\ run.pdf
